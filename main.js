@@ -1,5 +1,3 @@
-const { createElement } = require("react");
-
 const player = document.querySelector(".dinosaurs");
 
 document.addEventListener('keydown', function(event){
@@ -16,14 +14,22 @@ document.addEventListener('keydown', function(event){
     }
 })
 
+
+const game = document.querySelector(".game");
+
 function createObstacle(){
     const obstacle = document.createElement("div");
     obstacle.classList.add("obstacle");
 
-    document.appendChild(obstacle);
+    game.appendChild(obstacle);
 
     setTimeout(() => {
         obstacle.remove();
-    }, 300);
+    }, 900);
+
+    const randomTime = Math.random() * 3000 + 300;
+    setTimeout(createObstacle, randomTime);
 
 }
+
+createObstacle()
