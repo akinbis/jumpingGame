@@ -4,6 +4,24 @@ const gameContainer = document.querySelector("main");
 let gameRunning = true;
 let jumpTimeoutId = null;
 let spawnTimeoutId = null;
+let score = 0;
+let scoreIntervalId = null;
+
+function startScoring() {
+  scoreIntervalId = setInterval(() => {
+    score++;
+    updateScoreDisplay();
+  }, 100);
+}
+
+function stopScoring() {
+  clearInterval(scoreIntervalId);
+  scoreIntervalId = null;
+}
+
+function updateScoreDisplay() {
+  document.getElementById("score").textContent = `Score: ${score}`;
+}
 
 function jump() {
   if (!dinoCharacter.classList.contains("jumper")) {
@@ -18,8 +36,8 @@ function jump() {
   }
 }
 
-function checkObstacleLeftScreen(){
-  const rect1 = gameContainer.getBoundingClientRect()
+function checkObstacleLeftScreen() {
+  const rect1 = gameContainer.getBoundingClientRect();
 }
 
 function createObstacle() {
@@ -38,7 +56,7 @@ function spawnObstacle() {
     spawnTimeoutId = setTimeout(() => {
       spawnTimeoutId = null;
       spawnObstacle();
-      gameContainer.removeChild(obstacle)
+      gameContainer.removeChild(obstacle);
     }, randomDelay);
   }
 
@@ -85,6 +103,7 @@ function game() {
     obstacle.style.left = `${onCollisonLeftPos}px`;
     dinoCharacter.style.bottom = `${onCollisionBotPos}px`;
     console.log("Game Over!!");
+    stopScoring();
     gameRunning = false;
     return;
   }
@@ -97,6 +116,7 @@ function startGame() {
 
   if (userConfirm) {
     spawnObstacle();
+    startScoring();
     game();
   } else {
     alert("Okay, bye bye");
