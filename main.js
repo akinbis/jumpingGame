@@ -1,12 +1,34 @@
 const pinkMonster = document.getElementById("pink-monster");
 const characterWindow = document.getElementById("character-window");
+const gameContainer = document.querySelector("main");
+const highScoreDisplay = document.getElementById("high-score")
 let obstacleCollection = [];
 let cloudCollection = [];
-const gameContainer = document.querySelector("main");
 let gameRunning = true;
 let jumpTimeoutId = null;
 let spawnTimeoutId = null;
 let spawnCloudTimeoutId = null;
+let score = 0;
+let scoreIntervalId = null;
+let currentHighScore = window.localStorage.getItem("highScore");
+let highScore = 0;
+
+function startScoring() {
+  scoreIntervalId = setInterval(() => {
+    score++;
+    updateScoreDisplay();
+  }, 100);
+}
+
+function stopScoring() {
+  clearInterval(scoreIntervalId);
+  currentHighScore = score
+  scoreIntervalId = null;
+}
+
+function updateScoreDisplay() {
+  document.getElementById("score").textContent = `Score: ${score}`;
+}
 
 function jump() {
   if (!characterWindow.classList.contains("jumper")) {
@@ -189,6 +211,13 @@ function game() {
   for (let i = arrayIterationCount; i >= 0; i--) {
     if (detectCollision(obstacleCollection[i])) {
       onCollision(obstacleCollection[i]);
+
+      if(score > highScore){
+        highScore = score
+        window.localStorage.setItem("highScore", highScore)
+        highScoreDisplay.innerText = `highest score: ${highScore}`;
+      }
+      stopScoring()
       return;
     } else if (checkObstacleLeftScreen(obstacleCollection[i])) {
       removeObstacleFromScreen(obstacleCollection[i]);
@@ -210,6 +239,8 @@ function startGame() {
   if (userConfirm) {
     spawnObstacle();
     spawnCloud();
+    startScoring()
+    highScoreDisplay.innerText = `highest score: ${currentHighScore ? currentHighScore : highScore}`;
     pinkMonster.setAttribute(
       "src",
       "./images/Pink_Monster_Run_6_32px_frames.png",
