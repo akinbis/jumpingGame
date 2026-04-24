@@ -10,24 +10,22 @@ let spawnTimeoutId = null;
 let spawnCloudTimeoutId = null;
 let score = 0;
 let scoreIntervalId = null;
-let currentHighScore = window.localStorage.getItem("highScore");
-let highScore = 0;
+let highScore = Number(window.localStorage.getItem("highScore")) || 0;
 
 function startScoring() {
   scoreIntervalId = setInterval(() => {
     score++;
     updateScoreDisplay();
-  }, 100);
+  }, 1000);
 }
 
 function stopScoring() {
   clearInterval(scoreIntervalId);
-  currentHighScore = score;
   scoreIntervalId = null;
 }
 
 function updateScoreDisplay() {
-  document.getElementById("score").textContent = `Score: ${score}`;
+  document.getElementById("score").textContent = `score: ${score}`;
 }
 
 function jump() {
@@ -104,8 +102,10 @@ function onCollision(obstacle) {
   const onCollisionBotPos = gameContainerBotPos - characterWindowBotPos;
   clearTimeout(jumpTimeoutId);
   clearTimeout(spawnTimeoutId);
+  clearTimeout(spawnCloudTimeoutId);
   jumpTimeoutId = null;
   spawnTimeoutId = null;
+  spawnCloudTimeoutId = null
 
   for (let i = obstacleCollection.length - 1; i >= 0; i--) {
     if (obstacleCollection[i] !== obstacle) {
@@ -135,15 +135,18 @@ function onCollision(obstacle) {
   }
   gameRunning = false;
 
-  let playAgain = confirm(
-    `Game over! Your score is ${score}. Do you want to play again?`,
-  );
+  setTimeout(() => {
+    let playAgain = confirm(
+      `Game over! Your score is ${score}. Do you want to play again?`,
+    );
 
-  if (playAgain) {
-   window.location.reload()
-  }else{
-    alert("Okay, bye, bye")
-  }
+    if (playAgain) {
+      resetGame();
+      replayGame();
+    } else {
+      alert("Thanks for playing, hope you had fun, bye bye");
+    }
+  }, 1500);
 }
 
 function createObstacle() {
@@ -220,14 +223,15 @@ function game() {
 
   for (let i = arrayIterationCount; i >= 0; i--) {
     if (detectCollision(obstacleCollection[i])) {
-      onCollision(obstacleCollection[i]);
-
       if (score > highScore) {
         highScore = score;
         window.localStorage.setItem("highScore", highScore);
         highScoreDisplay.innerText = `highest score: ${highScore}`;
       }
       stopScoring();
+      onCollision(obstacleCollection[i]);
+      clearTimeout(spawnCloudTimeoutId);
+      spawnCloudTimeoutId = null;
       return;
     } else if (checkObstacleLeftScreen(obstacleCollection[i])) {
       removeObstacleFromScreen(obstacleCollection[i]);
@@ -243,14 +247,58 @@ function game() {
   requestAnimationFrame(game);
 }
 
+function replayGame() {
+  spawnObstacle();
+  spawnCloud();
+  startScoring();
+  pinkMonster.setAttribute(
+    "src",
+    "./images/Pink_Monster_Run_6_32px_frames.png",
+  );
+  pinkMonster.classList.remove("pink-monster-idle");
+  pinkMonster.classList.add("pink-monster-run");
+  game();
+}
+
+function resetGame() {
+  for (let i = 0; i < cloudCollection.length; i++) {
+    gameContainer.removeChild(cloudCollection[i]);
+  }
+
+  for (let j = 0; j < obstacleCollection.length; j++) {
+    gameContainer.removeChild(obstacleCollection[j]);
+  }
+  obstacleCollection = [];
+  cloudCollection = [];
+  pinkMonster.setAttribute(
+    "src",
+    "./images/Pink_Monster_Idle_4_32px_frames.png",
+  );
+  pinkMonster.classList.remove("pink-monster-hurt");
+  pinkMonster.classList.remove("pink-monster-jump");
+  pinkMonster.classList.remove("pink-monster-run");
+  pinkMonster.classList.add("pink-monster-idle");
+  characterWindow.style.bottom = "0px";
+  clearTimeout(spawnCloudTimeoutId);
+  clearInterval(scoreIntervalId)
+  clearTimeout(spawnTimeoutId)
+  clearTimeout(jumpTimeoutId)
+  spawnCloudTimeoutId = null;
+  spawnTimeoutId = null
+  jumpTimeoutId = null
+  score = 0;
+  document.getElementById("score").innerText = `score: ${0}`;
+  gameRunning = true;
+}
+
 function startGame() {
-  const userConfirm = confirm("Do you want to play Block Jump?");
+  const userConfirm = confirm("Do you want to play Monster Jump?");
 
   if (userConfirm) {
     spawnObstacle();
     spawnCloud();
     startScoring();
-    highScoreDisplay.innerText = `highest score: ${currentHighScore ? currentHighScore : highScore}`;
+    highScoreDisplay.innerText = `highest score: ${highScore ? highScore : 0}`;
     pinkMonster.setAttribute(
       "src",
       "./images/Pink_Monster_Run_6_32px_frames.png",
