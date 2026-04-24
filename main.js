@@ -141,6 +141,8 @@ function onCollision(obstacle) {
 
   if (playAgain) {
    window.location.reload()
+  }else{
+    alert("Okay, bye, bye")
   }
 }
 
