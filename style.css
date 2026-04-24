@@ -1,3 +1,7 @@
+:root {
+  --pixel-size: 3;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -9,20 +13,46 @@ body {
 
 main {
   border: 2px solid black;
-  width: 70%;
+  width: 1280px;
   height: 50vh;
   margin: 50px auto;
   position: relative;
   overflow: hidden;
+  background-color: aqua;
 }
 
-.dino-jumper {
-  width: 50px;
-  height: 100px;
-  background-color: grey;
+.character-window {
+  width: calc(26px * var(--pixel-size));
+  height: calc(32px * var(--pixel-size));
+  overflow: hidden;
+  /* border: 1px solid black; */
   position: absolute;
   bottom: 0;
-  left: 5%;
+  left: 100px;
+}
+
+.pink-monster {
+  height: calc(32px * var(--pixel-size));
+}
+
+.pink-monster-jump {
+  animation: monsterJump 1s steps(7) infinite;
+  width: calc(256px * var(--pixel-size));
+}
+
+.pink-monster-run {
+  animation: monsterRun 1s steps(5) infinite;
+  width: calc(192px * var(--pixel-size));
+}
+
+.pink-monster-idle {
+  animation: monsterIdle 1s steps(3) infinite;
+  width: calc(128px * var(--pixel-size));
+}
+
+.pink-monster-hurt{
+  animation: monsterHurt 1s steps(3) infinite;
+  width: calc(128px * var(--pixel-size));
 }
 
 .jumper {
@@ -37,14 +67,29 @@ main {
   background-color: black;
   position: absolute;
   bottom: 0;
-  left: 100%;
+  left: 1280px;
 }
 
 .move-obstacle {
   animation-name: moveObstacle;
   animation-duration: 2s;
   animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  animation-iteration-count: 1;
+}
+
+.pixel-cloud{
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  top: 100px;
+  left: 1280px;
+}
+
+.move-cloud{
+  animation-name: moveCloud;
+  animation-duration: 8s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
 }
 
 @keyframes moveObstacle {
@@ -95,5 +140,77 @@ main {
   }
   100% {
     bottom: 0px;
+  }
+}
+
+@keyframes moveCloud {
+  0% {
+    left: 100%;
+  }
+  10% {
+    left: 90%;
+  }
+  20% {
+    left: 80%;
+  }
+  30% {
+    left: 70%;
+  }
+  40% {
+    left: 60%;
+  }
+  50% {
+    left: 50%;
+  }
+  60% {
+    left: 40%;
+  }
+  70% {
+    left: 30%;
+  }
+  80% {
+    left: 20%;
+  }
+  90% {
+    left: 10%;
+  }
+  100% {
+    left: 0;
+  }
+}
+
+@keyframes monsterJump {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-224px * var(--pixel-size)));
+  }
+}
+
+@keyframes monsterRun {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-160px * var(--pixel-size)));
+  }
+}
+
+@keyframes monsterIdle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-96px * var(--pixel-size)));
+  }
+}
+
+@keyframes monsterHurt {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-96px * var(--pixel-size)));
   }
 }
