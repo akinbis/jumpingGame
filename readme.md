@@ -1,6 +1,6 @@
 Preview Link: comes here
 
-# 🎮 Block Jump
+# 🎮 Monster Jump
 
 A browser-based endless runner game where you control a **Pink Monster** that must jump over obstacles to survive. Built with vanilla HTML, CSS, and JavaScript.
 
