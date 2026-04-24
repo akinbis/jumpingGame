@@ -1,7 +1,7 @@
 const pinkMonster = document.getElementById("pink-monster");
 const characterWindow = document.getElementById("character-window");
 const gameContainer = document.querySelector("main");
-const highScoreDisplay = document.getElementById("high-score")
+const highScoreDisplay = document.getElementById("high-score");
 let obstacleCollection = [];
 let cloudCollection = [];
 let gameRunning = true;
@@ -22,7 +22,7 @@ function startScoring() {
 
 function stopScoring() {
   clearInterval(scoreIntervalId);
-  currentHighScore = score
+  currentHighScore = score;
   scoreIntervalId = null;
 }
 
@@ -134,6 +134,14 @@ function onCollision(obstacle) {
     pinkMonster.classList.add("pink-monster-hurt");
   }
   gameRunning = false;
+
+  let playAgain = confirm(
+    `Game over! Your score is ${score}. Do you want to play again?`,
+  );
+
+  if (playAgain) {
+   window.location.reload()
+  }
 }
 
 function createObstacle() {
@@ -212,12 +220,12 @@ function game() {
     if (detectCollision(obstacleCollection[i])) {
       onCollision(obstacleCollection[i]);
 
-      if(score > highScore){
-        highScore = score
-        window.localStorage.setItem("highScore", highScore)
+      if (score > highScore) {
+        highScore = score;
+        window.localStorage.setItem("highScore", highScore);
         highScoreDisplay.innerText = `highest score: ${highScore}`;
       }
-      stopScoring()
+      stopScoring();
       return;
     } else if (checkObstacleLeftScreen(obstacleCollection[i])) {
       removeObstacleFromScreen(obstacleCollection[i]);
@@ -239,7 +247,7 @@ function startGame() {
   if (userConfirm) {
     spawnObstacle();
     spawnCloud();
-    startScoring()
+    startScoring();
     highScoreDisplay.innerText = `highest score: ${currentHighScore ? currentHighScore : highScore}`;
     pinkMonster.setAttribute(
       "src",
