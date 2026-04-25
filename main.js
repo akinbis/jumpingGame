@@ -2,9 +2,14 @@ const pinkMonster = document.getElementById("pink-monster");
 const characterWindow = document.getElementById("character-window");
 const gameContainer = document.querySelector("main");
 const highScoreDisplay = document.getElementById("high-score");
+const startScreen = document.getElementById("start-screen");
+const startBtn = document.getElementById("start-btn");
+const gameOverScreen = document.getElementById("game-over-screen");
+const playAgainBtn = document.getElementById("play-again-btn");
+const finalScore = document.getElementById("final-score");
 let obstacleCollection = [];
 let cloudCollection = [];
-let gameRunning = true;
+let gameRunning = false;
 let jumpTimeoutId = null;
 let spawnTimeoutId = null;
 let spawnCloudTimeoutId = null;
@@ -26,6 +31,12 @@ function stopScoring() {
 
 function updateScoreDisplay() {
   document.getElementById("score").textContent = `score: ${score}`;
+}
+
+function playSound() {
+  let audio = new Audio("./assests/pixel-song.mp3");
+  audio.loop = true
+  audio.play();
 }
 
 function jump() {
@@ -105,7 +116,7 @@ function onCollision(obstacle) {
   clearTimeout(spawnCloudTimeoutId);
   jumpTimeoutId = null;
   spawnTimeoutId = null;
-  spawnCloudTimeoutId = null
+  spawnCloudTimeoutId = null;
 
   for (let i = obstacleCollection.length - 1; i >= 0; i--) {
     if (obstacleCollection[i] !== obstacle) {
@@ -136,16 +147,8 @@ function onCollision(obstacle) {
   gameRunning = false;
 
   setTimeout(() => {
-    let playAgain = confirm(
-      `Game over! Your score is ${score}. Do you want to play again?`,
-    );
-
-    if (playAgain) {
-      resetGame();
-      replayGame();
-    } else {
-      alert("Thanks for playing, hope you had fun, bye bye");
-    }
+    finalScore.innerText = `Score: ${score}`;
+    gameOverScreen.style.display = 'flex';
   }, 1500);
 }
 
@@ -205,13 +208,6 @@ function detectCollision(obstacle) {
     rect1.left > rect2.right
   );
 }
-
-window.addEventListener("keydown", (e) => {
-  if (e.code === "Space" && gameRunning) {
-    console.log("Hurrah!!");
-    jump();
-  }
-});
 
 function game() {
   if (!gameRunning) {
@@ -280,35 +276,46 @@ function resetGame() {
   pinkMonster.classList.add("pink-monster-idle");
   characterWindow.style.bottom = "0px";
   clearTimeout(spawnCloudTimeoutId);
-  clearInterval(scoreIntervalId)
-  clearTimeout(spawnTimeoutId)
-  clearTimeout(jumpTimeoutId)
+  clearInterval(scoreIntervalId);
+  clearTimeout(spawnTimeoutId);
+  clearTimeout(jumpTimeoutId);
   spawnCloudTimeoutId = null;
-  spawnTimeoutId = null
-  jumpTimeoutId = null
+  spawnTimeoutId = null;
+  jumpTimeoutId = null;
   score = 0;
   document.getElementById("score").innerText = `score: ${0}`;
   gameRunning = true;
 }
 
 function startGame() {
-  const userConfirm = confirm("Do you want to play Monster Jump?");
-
-  if (userConfirm) {
-    spawnObstacle();
-    spawnCloud();
-    startScoring();
-    highScoreDisplay.innerText = `highest score: ${highScore ? highScore : 0}`;
-    pinkMonster.setAttribute(
-      "src",
-      "./images/Pink_Monster_Run_6_32px_frames.png",
-    );
-    pinkMonster.classList.remove("pink-monster-idle");
-    pinkMonster.classList.add("pink-monster-run");
-    game();
-  } else {
-    alert("Okay, bye bye");
-  }
+  spawnObstacle();
+  spawnCloud();
+  startScoring();
+  highScoreDisplay.innerText = `highest score: ${highScore}`;
+  pinkMonster.setAttribute(
+    "src",
+    "./images/Pink_Monster_Run_6_32px_frames.png",
+  );
+  pinkMonster.classList.remove("pink-monster-idle");
+  pinkMonster.classList.add("pink-monster-run");
+  game();
 }
 
-startGame();
+startBtn.addEventListener("click", () => {
+  gameRunning = true
+  startScreen.style.display = 'none'
+  startGame();
+  playSound();
+});
+
+playAgainBtn.addEventListener("click", () =>{
+  gameOverScreen.style.display = 'none'
+  resetGame()
+  replayGame()
+})
+
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space" && gameRunning) {
+    jump();
+  }
+});
