@@ -1,4 +1,4 @@
-Preview Link: comes here
+Preview Link: [comes here](https://akinbis.github.io/jumpingGame/)
 
 # 🎮 Monster Jump
 
